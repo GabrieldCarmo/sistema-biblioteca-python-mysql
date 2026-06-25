@@ -1,5 +1,7 @@
 import mysql.connector
 import os
+from datetime import datetime
+import time
 
 # Function de conexao
 def conectar():
@@ -22,10 +24,21 @@ def cadastrar_livro(conexao, cursor):
 
     titulo = input("\nDigite o título do livro: ")
     autor = input("Digite o autor do livro: ")
+
     try:
         ano_publicacao = int(input("Digite o ano de publicação: "))
     except ValueError:
         print("\nInsira somente números")
+        return
+
+    if not titulo.strip() or not autor.strip():
+        print("\nPreencha todos os campos")
+        return
+    
+    ano_atual = datetime.now().year
+    if ano_publicacao > ano_atual:
+        print("\nInsira um ano válido")
+        return
 
     sql = "INSERT INTO livro (titulo, autor, ano_publicacao) VALUES (%s, %s, %s)"
     valores = (titulo, autor, ano_publicacao)
@@ -60,7 +73,7 @@ def listar_livros(conexao, cursor):
 
 # Function de buscar livros
 def buscar_livro(conexao, cursor):
-
+    limpar_tela()
     print("\n" + "=" * 50)
     print("BUSCAR LIVRO")
     print("=" * 50)
@@ -75,46 +88,20 @@ def buscar_livro(conexao, cursor):
     except ValueError:
         opcao = -1
 
+    # Busca por ID
     if opcao == 1:
+
         try:
             id_livro = int(input("\nDigite o ID do livro: "))
-
-            if id_livro > 0:
-                cursor.execute(
-                    "SELECT * FROM livro WHERE id_livro = %s",
-                    (id_livro,)
-                )
-
-                livro = cursor.fetchone()
-
-                if livro:
-                    print("\n" + "=" * 50)
-                    print("LIVRO ENCONTRADO")
-                    print("=" * 50)
-                    print(f"ID: {livro[0]}")
-                    print(f"Título: {livro[1]}")
-                    print(f"Autor: {livro[2]}")
-                    print(f"Ano: {livro[3]}")
-                    print("=" * 50)
-                else:
-                    print("\nLivro não encontrado!")
-            else:
-                print("\nInsira somente valores maiores que zero")
-
         except ValueError:
             print("\nInsira um número válido")
 
-    elif opcao == 2:
-        titulo = input("\nDigite o título do livro: ")
-
-        if titulo:
+        if id_livro > 0:
             cursor.execute(
-                "SELECT * FROM livro where titulo LIKE %s",
-                (f"%{titulo}%",)
+                "SELECT * FROM livro WHERE id_livro = %s",
+                (id_livro,)
             )
-
             livro = cursor.fetchone()
-
             if livro:
                 print("\n" + "=" * 50)
                 print("LIVRO ENCONTRADO")
@@ -124,6 +111,35 @@ def buscar_livro(conexao, cursor):
                 print(f"Autor: {livro[2]}")
                 print(f"Ano: {livro[3]}")
                 print("=" * 50)
+            else:
+                print("\nLivro não encontrado!")
+        else:
+            print("\nInsira somente valores maiores que zero")
+
+    # Busca por titulo
+    elif opcao == 2:
+        titulo = input("\nDigite o título do livro: ")
+
+        if titulo:
+            cursor.execute(
+                "SELECT * FROM livro where titulo LIKE %s",
+                (f"%{titulo}%",)
+            )
+
+            livros = cursor.fetchall()
+
+            if livros:
+                print("\n" + "=" * 50)
+                print("LIVROS ENCONTRADOS")
+                print("=" * 50)
+
+                for livro in livros:
+                    print(f"ID: {livro[0]}")
+                
+                    print(f"Título: {livro[1]}")
+                    print(f"Autor: {livro[2]}")
+                    print(f"Ano: {livro[3]}")
+                    print("-" * 50)
             else:
                 print("\nLivro não encontrado!")
         else:
@@ -139,6 +155,7 @@ def buscar_livro(conexao, cursor):
 
 # Function do menu de escolha
 def menu():
+    limpar_tela()
     print("\n" + "=" * 50)
     print("MENU PRINCIPAL")
     print("=" * 50)
@@ -159,14 +176,16 @@ def menu():
 
 limpar_tela()
 
+conexao = conectar()
+cursor = conexao.cursor()
+
 print("\n" + "=" * 50)
 print("SISTEMA BIBLIOTECÁRIO v1.0")
 print("=" * 50)
 print("Banco de dados conectado com sucesso!")
 print("=" * 50)
 
-conexao = conectar()
-cursor = conexao.cursor()
+time.sleep(2)
 
 while True:
     escolha = menu()
