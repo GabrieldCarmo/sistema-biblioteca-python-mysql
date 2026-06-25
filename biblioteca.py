@@ -1,4 +1,5 @@
 import mysql.connector
+import os
 
 # Function de conexao
 def conectar():
@@ -25,7 +26,7 @@ def cadastrar_livro(conexao, cursor):
         ano_publicacao = int(input("Digite o ano de publicação: "))
     except ValueError:
         print("\nInsira somente números")
-        
+
     sql = "INSERT INTO livro (titulo, autor, ano_publicacao) VALUES (%s, %s, %s)"
     valores = (titulo, autor, ano_publicacao)
 
@@ -104,8 +105,29 @@ def buscar_livro(conexao, cursor):
             print("\nInsira um número válido")
 
     elif opcao == 2:
-        print("\nBuscar por título ainda não implementado")
+        titulo = input("\nDigite o título do livro: ")
 
+        if titulo:
+            cursor.execute(
+                "SELECT * FROM livro where titulo LIKE %s",
+                (f"%{titulo}%",)
+            )
+
+            livro = cursor.fetchone()
+
+            if livro:
+                print("\n" + "=" * 50)
+                print("LIVRO ENCONTRADO")
+                print("=" * 50)
+                print(f"ID: {livro[0]}")
+                print(f"Título: {livro[1]}")
+                print(f"Autor: {livro[2]}")
+                print(f"Ano: {livro[3]}")
+                print("=" * 50)
+            else:
+                print("\nLivro não encontrado!")
+        else:
+            print("\nDigite um título válido")
     elif opcao == 3:
         print("\nBuscar por autor ainda não implementado")
 
@@ -134,6 +156,9 @@ def menu():
         return -1
 
 # Mensagem inicial do programa
+
+limpar_tela()
+
 print("\n" + "=" * 50)
 print("SISTEMA BIBLIOTECÁRIO v1.0")
 print("=" * 50)
