@@ -103,7 +103,8 @@ def buscar_livro(conexao, cursor):
         try:
             id_livro = int(input("\nDigite o ID do livro: "))
         except ValueError:
-            print("\nInsira um número válido")
+            print("\nInsira um número válido!")
+            return
 
         if id_livro > 0:
             cursor.execute(
@@ -153,7 +154,6 @@ def buscar_livro(conexao, cursor):
                     print("-" * 50)
             else:
                 print("\nLivro não encontrado!")
-            confirma_enter()
         else:
             print("\nDigite um título válido")
 
@@ -183,9 +183,8 @@ def buscar_livro(conexao, cursor):
                     print("-" * 50)
             else:
                 print("\nLivro não encontrado!")
-            confirma_enter()
         else:
-            print("\nDigite um autor válido")
+            print("\nDigite um autor válido!")
 
     elif opcao == 4:
         print("\nRetornando ao menu...")
@@ -193,9 +192,68 @@ def buscar_livro(conexao, cursor):
     else:
         print("\nOpção inválida")
         return
+    confirma_enter()
 
 #Function de atualização de livros
+def atualizar_livro(conexao, cursor):
+    print("Em construção")
 
+#Function de deletar livros
+def deletar_livros(conexao, cursor):
+    try:
+        id_livro = int(input("\nDigite o ID do livro que deseja deletar: "))
+    except ValueError:
+        print("\nInsira um valor válido!")
+        return
+
+    if id_livro > 0 and id_livro:
+        cursor.execute(
+            "SELECT * FROM livro WHERE id_livro LIKE %s",
+            (id_livro,)
+        )
+        
+        livro = cursor.fetchone()
+
+        if livro: 
+            limpar_tela()
+            print("\n" + "=" * 50)
+            print("LIVROS ENCONTRADOS")
+            print("=" * 50)
+            print(f"ID: {livro[0]}")
+            print(f"Título: {livro[1]}")
+            print(f"Autor: {livro[2]}")
+            print(f"Ano: {livro[3]}")
+            print("=" * 50)
+
+            time.sleep(1.5)
+
+            try:
+                escolha = str(input("\nTem certeza que deseja apagar este livro? (S/n)"))
+            except ValueError:
+                print("\nInsira apenas S ou N para continuar!")
+                return
+            
+            
+            if escolha.lower() == "s" :
+                print("\nApagando Livro!")
+                time.sleep(1.5)
+                cursor.execute(
+                    "DELETE FROM livro WHERE id_livro = %s",
+                    (id_livro,)
+                )
+                time.sleep(1.5)
+                limpar_tela()
+                conexao.commit()
+                print("\nLivro apagado com sucesso!")
+            else:
+                print("\nInsira apenas S ou N para continuar!")
+                return
+        else:
+            print("\nLivro não encontrado!")
+    else:
+        print("\nInsira um ID válido!")
+    confirma_enter()
+    
 # Function do menu de escolha
 def menu():
     limpar_tela()
@@ -246,7 +304,7 @@ while True:
         print("\nAtualização ainda não implementada")
 
     elif escolha == 5:
-        print("\nExclusão ainda não implementada")
+        deletar_livros(conexao, cursor)
 
     elif escolha == 6:
         conexao.close()
