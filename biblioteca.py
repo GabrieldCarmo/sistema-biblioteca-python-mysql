@@ -16,7 +16,10 @@ def conectar():
 def limpar_tela():
      os.system("cls" if os.name == "nt" else "clear")
 
-# Function de cadastro
+def confirma_enter():
+    input("\nAperte enter para voltar ao menu: ")
+
+# Function de cadastrar os livros
 def cadastrar_livro(conexao, cursor):
     print("\n" + "=" * 50)
     print("CADASTRO DE LIVRO")
@@ -32,12 +35,14 @@ def cadastrar_livro(conexao, cursor):
         return
 
     if not titulo.strip() or not autor.strip():
+        time.sleep(2)
         print("\nPreencha todos os campos")
         return
     
     ano_atual = datetime.now().year
     if ano_publicacao > ano_atual:
         print("\nInsira um ano válido")
+        time.sleep(2)
         return
 
     sql = "INSERT INTO livro (titulo, autor, ano_publicacao) VALUES (%s, %s, %s)"
@@ -52,6 +57,8 @@ def cadastrar_livro(conexao, cursor):
 
 # Function de listar os livros
 def listar_livros(conexao, cursor):
+
+    limpar_tela()
 
     print("\n" + "=" * 50)
     print("LISTA DE LIVROS")
@@ -70,6 +77,8 @@ def listar_livros(conexao, cursor):
             print(f"Autor: {livro[2]}")
             print(f"Ano: {livro[3]}")
         print("-" * 50)
+    
+    confirma_enter()
 
 # Function de buscar livros
 def buscar_livro(conexao, cursor):
@@ -103,6 +112,7 @@ def buscar_livro(conexao, cursor):
             )
             livro = cursor.fetchone()
             if livro:
+                limpar_tela()
                 print("\n" + "=" * 50)
                 print("LIVRO ENCONTRADO")
                 print("=" * 50)
@@ -129,6 +139,7 @@ def buscar_livro(conexao, cursor):
             livros = cursor.fetchall()
 
             if livros:
+                limpar_tela()
                 print("\n" + "=" * 50)
                 print("LIVROS ENCONTRADOS")
                 print("=" * 50)
@@ -142,16 +153,48 @@ def buscar_livro(conexao, cursor):
                     print("-" * 50)
             else:
                 print("\nLivro não encontrado!")
+            confirma_enter()
         else:
             print("\nDigite um título válido")
+
     elif opcao == 3:
-        print("\nBuscar por autor ainda não implementado")
+        autor = input("\nDigite o nome do autor do livro: ")
+
+        if autor:
+            cursor.execute(
+                "SELECT * FROM livro where autor LIKE %s",
+                (f"%{autor}%",)
+            )
+
+            livros = cursor.fetchall()
+
+            if livros:
+                limpar_tela()
+                print("\n" + "=" * 50)
+                print("LIVROS ENCONTRADOS")
+                print("=" * 50)
+
+                for livro in livros:
+                    print(f"ID: {livro[0]}")
+                
+                    print(f"Título: {livro[1]}")
+                    print(f"Autor: {livro[2]}")
+                    print(f"Ano: {livro[3]}")
+                    print("-" * 50)
+            else:
+                print("\nLivro não encontrado!")
+            confirma_enter()
+        else:
+            print("\nDigite um autor válido")
 
     elif opcao == 4:
         print("\nRetornando ao menu...")
 
     else:
         print("\nOpção inválida")
+        return
+
+#Function de atualização de livros
 
 # Function do menu de escolha
 def menu():
@@ -185,7 +228,7 @@ print("=" * 50)
 print("Banco de dados conectado com sucesso!")
 print("=" * 50)
 
-time.sleep(2)
+time.sleep(1.5)
 
 while True:
     escolha = menu()
