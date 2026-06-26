@@ -21,6 +21,7 @@ def confirma_enter():
 
 # Function de cadastrar os livros
 def cadastrar_livro(conexao, cursor):
+    limpar_tela()
     print("\n" + "=" * 50)
     print("CADASTRO DE LIVRO")
     print("=" * 50)
@@ -51,9 +52,12 @@ def cadastrar_livro(conexao, cursor):
     cursor.execute(sql, valores)
     conexao.commit()
 
+    limpar_tela()
     print("\n" + "=" * 50)
     print("LIVRO CADASTRADO COM SUCESSO")
     print("=" * 50)
+
+    confirma_enter()
 
 # Function de listar os livros
 def listar_livros(conexao, cursor):
@@ -196,7 +200,69 @@ def buscar_livro(conexao, cursor):
 
 #Function de atualização de livros
 def atualizar_livro(conexao, cursor):
-    print("Em construção")
+    limpar_tela()
+    try:
+        id_livro = int(input("\nDigite o ID do livro que deseja atualizar: "))
+    except ValueError:
+        print("\nInsira um valor válido!")
+        return
+
+    if id_livro > 0 and id_livro:
+        cursor.execute(
+            "SELECT * FROM livro WHERE id_livro LIKE %s",
+            (id_livro,)
+        )
+        
+        livro = cursor.fetchone()
+
+        if livro: 
+            limpar_tela()
+            print("\n" + "=" * 50)
+            print("LIVRO ENCONTRADO")
+            print("=" * 50)
+            print(f"ID: {livro[0]}")
+            print(f"Título: {livro[1]}")
+            print(f"Autor: {livro[2]}")
+            print(f"Ano: {livro[3]}")
+            print("=" * 50)
+
+            time.sleep(1)
+
+            print("\n" + "=" * 50)
+            print("O QUE DESEJA ATUALIZAR? ")
+            print("=" * 50)
+            print("[1] Atualizar título")
+            print("[2] Atualizar Autor")
+            print("[3] Atualizar ano de lançamento")
+            print("[4] Voltar ao Menu Principal")
+            print("=" * 50)
+
+
+            try:
+                opcao = int(input("\nEscolha uma opção: "))
+            except ValueError:
+                opcao = -1
+            
+            if opcao == 1:
+                novo_titulo = input("\nDigite o novo título do livro: ")
+
+                cursor.execute(
+                    "UPDATE livro SET titulo = %s WHERE id_livro = %s",
+                    (novo_titulo, id_livro,)
+                )
+
+                print("\nLivro atualizado com sucesso! ")
+
+
+            elif opcao == 2:
+                print()
+            elif opcao == 3:
+                print()
+            elif opcao == 4:
+                print()
+            else:
+                print()
+
 
 #Function de deletar livros
 def deletar_livros(conexao, cursor):
@@ -228,7 +294,7 @@ def deletar_livros(conexao, cursor):
             time.sleep(1.5)
 
             try:
-                escolha = str(input("\nTem certeza que deseja apagar este livro? (S/n)"))
+                escolha = str(input("\nTem certeza que deseja apagar este livro? (S/n): "))
             except ValueError:
                 print("\nInsira apenas S ou N para continuar!")
                 return
@@ -301,7 +367,7 @@ while True:
         buscar_livro(conexao, cursor)
 
     elif escolha == 4:
-        print("\nAtualização ainda não implementada")
+        atualizar_livro(conexao, cursor)
 
     elif escolha == 5:
         deletar_livros(conexao, cursor)
