@@ -245,6 +245,7 @@ def atualizar_livro(conexao, cursor):
             
             limpar_tela()
 
+            # Atualizar titulo do livro
             if opcao == 1:
                 novo_titulo = input("\nDigite o novo título do livro: ")
 
@@ -255,6 +256,7 @@ def atualizar_livro(conexao, cursor):
                 limpar_tela()
                 print("\nTítulo do livro atualizado com sucesso! ")
 
+            #Atualizar autor do livro
             elif opcao == 2:
                 novo_autor = input("\nDigite o novo autor do livro: ")
 
@@ -264,20 +266,22 @@ def atualizar_livro(conexao, cursor):
                 )
                 limpar_tela()
                 print("\nAutor do livro atualizado com sucesso! ")
-
+            
+            #Atualizar ano de lancamento do livro
             elif opcao == 3:
                 novo_ano = input("\nDigite o novo ano de lançamento: ")
 
                 cursor.execute(
-                    "UPDATE livro set ano_lancamento = %s WHERE id_livro = %s",
+                    "UPDATE livro set ano_publicacao = %s WHERE id_livro = %s",
                     (novo_ano, id_livro,)
                 )
                 limpar_tela()
                 print("\nAno de lançamento do livro atualizado com sucesso! ")
 
+            #voltar ao menu
             elif opcao == 4:
                 return
-                
+            
             else:
                 print("\nOpção inválida! Tente novamente")
 
