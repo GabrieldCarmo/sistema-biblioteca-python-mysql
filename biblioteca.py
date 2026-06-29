@@ -251,17 +251,29 @@ def atualizar_livro(conexao, cursor):
                     (novo_titulo, id_livro,)
                 )
 
-                print("\nLivro atualizado com sucesso! ")
-
+                print("\nTítulo do livro atualizado com sucesso! ")
 
             elif opcao == 2:
-                print()
+                novo_autor = input("\nDigite o novo autor do livro: ")
+
+                cursor.execute(
+                    "UPDATE livro SET autor = %s WHERE id_livro = %s",
+                    (novo_autor, id_livro,)
+                )
             elif opcao == 3:
-                print()
+                novo_ano = input("\nDigite o novo ano de lançamento: ")
+
+                cursor.execute(
+                    "UPDATE livro set ano_lancamento = %s WHERE id_livro = %s",
+                    (novo_ano, id_livro,)
+                )
+
             elif opcao == 4:
-                print()
+                print("\n")
             else:
-                print()
+                print("\nOpção inválida! Tente novamente")
+            
+            confirma_enter()
 
 
 #Function de deletar livros
