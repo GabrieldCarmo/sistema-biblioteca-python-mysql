@@ -48,4 +48,4 @@ Projeto desenvolvido exclusivamente para fins de estudo.
 
 ## 👨‍💻 Autor
 
-Gabriel Felipe
+Gabriel do Carmo
