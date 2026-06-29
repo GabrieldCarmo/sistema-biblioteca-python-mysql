@@ -243,6 +243,8 @@ def atualizar_livro(conexao, cursor):
             except ValueError:
                 opcao = -1
             
+            limpar_tela()
+
             if opcao == 1:
                 novo_titulo = input("\nDigite o novo título do livro: ")
 
@@ -250,7 +252,7 @@ def atualizar_livro(conexao, cursor):
                     "UPDATE livro SET titulo = %s WHERE id_livro = %s",
                     (novo_titulo, id_livro,)
                 )
-
+                limpar_tela()
                 print("\nTítulo do livro atualizado com sucesso! ")
 
             elif opcao == 2:
@@ -260,6 +262,9 @@ def atualizar_livro(conexao, cursor):
                     "UPDATE livro SET autor = %s WHERE id_livro = %s",
                     (novo_autor, id_livro,)
                 )
+                limpar_tela()
+                print("\nAutor do livro atualizado com sucesso! ")
+
             elif opcao == 3:
                 novo_ano = input("\nDigite o novo ano de lançamento: ")
 
@@ -267,14 +272,17 @@ def atualizar_livro(conexao, cursor):
                     "UPDATE livro set ano_lancamento = %s WHERE id_livro = %s",
                     (novo_ano, id_livro,)
                 )
+                limpar_tela()
+                print("\nAno de lançamento do livro atualizado com sucesso! ")
 
             elif opcao == 4:
-                print("\n")
+                return
+                
             else:
                 print("\nOpção inválida! Tente novamente")
-            
-            confirma_enter()
 
+            conexao.commit()
+            confirma_enter()
 
 #Function de deletar livros
 def deletar_livros(conexao, cursor):
